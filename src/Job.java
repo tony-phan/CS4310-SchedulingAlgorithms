@@ -18,12 +18,20 @@ public class Job implements Comparable<Job>, Cloneable {
         return burstTime;
     }
 
+    public void setBurstTime(int burstTime) {
+        this.burstTime = burstTime;
+    }
+
     public void decrementBurstTime(int timeSlice) {
         this.burstTime -= timeSlice;
     }
 
     public void setStartTime(int startTime) {
         this.startTime = startTime;
+    }
+
+    public int getStartTime() {
+        return startTime;
     }
 
     public void setEndTime(int endTime) {
