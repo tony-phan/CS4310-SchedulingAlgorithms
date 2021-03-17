@@ -1,4 +1,4 @@
-public class Job implements Comparable<Job> {
+public class Job implements Comparable<Job>, Cloneable {
     
     private String name;
     private int burstTime;
@@ -10,14 +10,35 @@ public class Job implements Comparable<Job> {
         this.burstTime = burstTime;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public int getBurstTime() {
         return burstTime;
     }
 
+    public void decrementBurstTime(int timeSlice) {
+        this.burstTime -= timeSlice;
+    }
+
+    public void setStartTime(int startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(int endTime) {
+        this.endTime = endTime;
+    }
+
+    public int getEndTime() {
+        return endTime;
+    }
+
     @Override
     public String toString() {
+        // TODO Auto-generated method stub
         return name + "," + burstTime;
-    }
+    }    
 
     //compare the burst time of the job with another job
     @Override

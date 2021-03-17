@@ -9,35 +9,81 @@ public class Main {
         List<Job> jobList = new ArrayList<Job>();
         readJobFile(FILE_PATH, jobList);
 
-        double firstComeFirstServed = fcfs(new ArrayList<Job>(jobList));
-        double shorstJobFirst = sjf(new ArrayList<Job>(jobList));
-        double roundRobin2 = roundRobin(2, new ArrayList<Job>(jobList));
-        double roundRobin5 = roundRobin(5, new ArrayList<Job>(jobList));
+        //fcfs(new ArrayList<Job>(jobList));
+        //sjf(new ArrayList<Job>(jobList));
+        //roundRobin(2, new ArrayList<Job>(jobList));
+        roundRobin(5, new ArrayList<Job>(jobList));
     }
 
-    private static double fcfs(List<Job> jobs) {
+    private static void fcfs(List<Job> jobs) {
         System.out.println("Performing First Come First Serve Scheduling...");
         Queue<Job> queue = new LinkedList<Job>(jobs);
+        int numJobs = queue.size();
 
-        double turnAroundTime = 0;
+        float totalTime = 0;
+        int timer = 0;
 
-        return turnAroundTime;
+        for(int i = 0; i < numJobs; ++i) {
+            Job currentJob = queue.poll();
+            currentJob.setStartTime(timer);
+            timer += currentJob.getBurstTime();
+            currentJob.setEndTime(timer);
+            totalTime += currentJob.getEndTime();
+        }
+
+        printScheduleTable(jobs, totalTime / (float)numJobs);
     }
 
-    private static double sjf(List<Job> jobs) {
+    private static void sjf(List<Job> jobs) {
         System.out.println("Performing Shortest Job First Scheduling...");
         PriorityQueue<Job> priorityQueue = new PriorityQueue<Job>(jobs);
+        jobs.clear();
+        int numJobs = priorityQueue.size();
 
-        double turnAroundTime = 0;
+        float totalTime = 0;
+        int timer = 0;
 
-        return turnAroundTime;
+        for(int i = 0; i < numJobs; ++i) {
+            Job currentJob = priorityQueue.poll();
+            currentJob.setStartTime(timer);
+            timer += currentJob.getBurstTime();
+            currentJob.setEndTime(timer);
+            totalTime += currentJob.getEndTime();
+            jobs.add(currentJob);
+        }
+
+        printScheduleTable(jobs, totalTime / (float)numJobs);
     }
 
-    private static double roundRobin(int timeSlice, List<Job> jobs) {
-        System.out.println("Performing Round Robin (Time Slice: " + timeSlice + ") Scheduling...");
-        double turnAroundTime = 0;
+    private static void roundRobin(int timeSlice, List<Job> jobs) {
+        System.out.println("Performing Round-Robin (Time Slice: " + timeSlice + ") Scheduling...");
+        Queue<Job> queue = new LinkedList<Job>(jobs);
+        int numJobs = queue.size();
+        jobs.clear();
 
-        return turnAroundTime;
+        float totalTime = 0;
+        int timer = 0;
+        while(!queue.isEmpty()) {
+            Job currentJob = queue.poll();
+            if(currentJob.getBurstTime() - timeSlice < 0) {
+                timer += currentJob.getBurstTime();
+                currentJob.setEndTime(timer);
+                totalTime += currentJob.getEndTime();
+            }
+            else if(currentJob.getBurstTime() - timeSlice == 0) {
+                timer += timeSlice;
+                currentJob.setEndTime(timer);
+                totalTime += currentJob.getEndTime();
+            }
+            else {
+                timer += timeSlice;
+                currentJob.decrementBurstTime(timeSlice);
+                currentJob.setEndTime(timer);
+                queue.add(currentJob);
+            }
+        }        
+
+        printScheduleTable(jobs, totalTime / (float)numJobs);
     }
 
     private static void generateRandomJobsInFile(int numJobs) {
@@ -58,7 +104,7 @@ public class Main {
         }
     }
 
-    private static void readJobFile(String file, List<Job> jobList) {
+    private static void readJobFile(String file, List<Job> jobs) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line = reader.readLine();
@@ -67,7 +113,7 @@ public class Main {
                 //read next line
                 line = reader.readLine();
                 int burstTime = Integer.parseInt(line);
-                jobList.add(new Job(name, burstTime));
+                jobs.add(new Job(name, burstTime));
 
                 line = reader.readLine();
             }
@@ -76,5 +122,9 @@ public class Main {
             System.out.println("An error occured");
             e.printStackTrace();
         }
+    }
+
+    private static void printScheduleTable(List<Job> jobList, float averageTurnAroundTime) {
+        System.out.println("Average turn around time is: " + averageTurnAroundTime);
     }
 }
