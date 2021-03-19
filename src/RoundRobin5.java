@@ -2,15 +2,18 @@ import java.util.*;
 import java.io.*;
 
 public class RoundRobin5 {
-    final static int[] JOB_SIZES = {5, 10, 15, 20, 25, 30};
+    final static int[] JOB_SIZES = {5, 10, 15};
     final static String FILE_PATH = "C:\\Users\\tonyp\\Documents\\CS 4310\\Project1\\src\\jobs.txt";
     final static int TIME_SLICE = 5;
 
     public static void main(String[] args) throws Exception {
-        List<Job> jobList = new ArrayList<Job>();
-        readJobFile(FILE_PATH, jobList);
+        for(int size : JOB_SIZES) {
+            generateRandomJobsInFile(size);
+            List<Job> jobList = new ArrayList<Job>();
+            readJobFile(FILE_PATH, jobList);
 
-        roundRobin(TIME_SLICE, jobList);
+            roundRobin(TIME_SLICE, jobList);
+        }
     }
 
     private static void roundRobin(int timeSlice, List<Job> jobs) {
